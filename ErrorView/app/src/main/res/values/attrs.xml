@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="validationFieldStyle" format="reference" />
+    <attr name="validationView" format="reference"/>
+    <attr name="textValidationAppearance" format="reference"/>
+    <attr name="validationAppearance" format="reference"/>
+
+    <declare-styleable name="ValidationField">
+        <attr name="hint" format="string"/>
+        <attr name="background"/>
+        <attr name="viewType">
+            <enum name="EditText" value="0"/>
+            <enum name="TextView" value="1"/>
+        </attr>
+        <attr name="validationView"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="validationView">
+        <attr name="android:textAppearance"/>
+        <attr name="android:layout_height"/>
+    </declare-styleable>
+
+</resources>

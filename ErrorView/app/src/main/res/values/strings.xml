@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ErrorView</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hint_task_name">Task</string>
+</resources>

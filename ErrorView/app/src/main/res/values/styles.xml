@@ -1,0 +1,35 @@
+<resources>
+
+<!--    &lt;!&ndash; Base application theme. &ndash;&gt;
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        &lt;!&ndash; Customize your theme here. &ndash;&gt;
+        <item name="colorControlActivated">@android:color/holo_orange_dark</item>
+    </style>
+
+    <style name="Widget" parent="@android:style/Widget"/>
+
+    <style name="Widget.ValidationField">
+
+    </style>-->
+
+    <style name="Widget" parent="@android:style/Widget">
+
+    </style>
+
+    <style name="Widget.ValidationField">
+        <item name="validationView">?attr/validationView</item>
+        <item name="background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="Widget.TextValidationAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@android:color/holo_red_light</item>
+    </style>
+
+    <style name="Widget.ValidationView" parent="@android:style/Widget.TextView">
+        <item name="android:textAppearance">?attr/textValidationAppearance</item>
+        <item name="android:layout_height">16dp</item>
+    </style>
+
+</resources>

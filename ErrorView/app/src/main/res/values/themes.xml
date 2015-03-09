@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppProductivityTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="validationFieldStyle">@style/Widget.ValidationField</item>
+        <item name="validationView">@style/Widget.ValidationView</item>
+        <item name="textValidationAppearance">@style/Widget.TextValidationAppearance</item>
+    </style>
+
+</resources>
