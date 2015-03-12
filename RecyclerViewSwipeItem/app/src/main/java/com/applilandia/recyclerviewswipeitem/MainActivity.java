@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends ActionBarActivity {
 
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
@@ -59,15 +58,17 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(view.getContext(), "click", Toast.LENGTH_SHORT).show();
             }
         };
-        mRecyclerView.addOnItemTouchListener(new RegisterItemClickListener(this, mOnItemClickListener));
-        mRecyclerView.setOnTouchListener(new RecyclerViewTouchListener(mRecyclerView,
+        RecyclerViewTouchListener touchListener = new RecyclerViewTouchListener(mRecyclerView,
                 new RecyclerViewTouchListener.OnRecyclerViewTouchListener() {
                     @Override
                     public void onDismiss(int position) {
                         mItems.remove(position);
                         mAdapter.notifyDataSetChanged();
                     }
-                }));
+                });
+        mRecyclerView.setOnScrollListener(touchListener.makeScrollListener());
+        mRecyclerView.addOnItemTouchListener(new RegisterItemClickListener(this, mOnItemClickListener));
+        mRecyclerView.setOnTouchListener(touchListener);
     }
 
     private class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -106,6 +107,8 @@ public class MainActivity extends ActionBarActivity {
 
     private class RegisterItemClickListener implements RecyclerView.OnItemTouchListener {
 
+        private final String LOG_TAG = RegisterItemClickListener.class.getSimpleName();
+
         private OnItemClickListener mListener;
         private GestureDetector mGestureDetector;
 
@@ -138,9 +141,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
         }
     }
-
 
 }

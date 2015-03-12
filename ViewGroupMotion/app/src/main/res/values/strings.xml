@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ViewGroupMotion</string>
+
+    <string name="text_view_message">View Test</string>
+</resources>

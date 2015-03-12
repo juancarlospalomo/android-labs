@@ -2,18 +2,25 @@ package com.applilandia.recyclerviewswipeitem;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.graphics.Rect;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 /**
  * Created by JuanCarlos on 12/03/2015.
  */
 public class RecyclerViewTouchListener implements View.OnTouchListener {
+
+    private static final String LOG_TAG = RecyclerViewTouchListener.class.getSimpleName();
 
     public interface OnRecyclerViewTouchListener {
         public void onDismiss(int position);
@@ -28,12 +35,35 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
     private float mSlop, mSwipingSlop;
     private boolean mSwiping = false;
     private int mViewWidth = 1;
+    private boolean mPaused;
 
     public RecyclerViewTouchListener(RecyclerView recyclerView, OnRecyclerViewTouchListener l) {
         mRecyclerView = recyclerView;
         mOnRecyclerViewTouchListener = l;
         ViewConfiguration viewConfiguration = ViewConfiguration.get(recyclerView.getContext());
         mSlop = viewConfiguration.getScaledTouchSlop();
+    }
+
+    /**
+     * Enables or disables (pauses or resumes) watching for swipe-to-dismiss gestures.
+     *
+     * @param enabled Whether or not to watch for gestures.
+     */
+    public void setEnabled(boolean enabled) {
+        mPaused = !enabled;
+    }
+
+    public RecyclerView.OnScrollListener makeScrollListener() {
+        return new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                setEnabled(newState != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            }
+        };
     }
 
     private View getViewPressed(MotionEvent event) {
@@ -59,7 +89,6 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         if (mViewWidth < 2) {
             mViewWidth = mRecyclerView.getWidth();
         }
@@ -68,6 +97,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
 
         switch (actionId) {
             case MotionEvent.ACTION_DOWN:
+                Log.v(LOG_TAG, "onTouch - Down");
                 mDownView = getViewPressed(event);
                 if (mDownView != null) {
                     mDownX = event.getRawX();
@@ -79,6 +109,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_UP:
+                Log.v(LOG_TAG, "onTouch - Up");
                 if (mVelocityTracker == null) {
                     break;
                 }
@@ -88,6 +119,8 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                     dismiss = true;
                 }
                 if (dismiss && mDownPosition != ListView.INVALID_POSITION) {
+
+                    final View downView = mDownView; //mDownView gets null before animation ends
                     final int position = mDownPosition;
                     mDownView.animate()
                             .translationX(mViewWidth)
@@ -97,13 +130,12 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    if (mOnRecyclerViewTouchListener != null) {
-                                        mOnRecyclerViewTouchListener.onDismiss(position);
-                                    }
+                                    performDismiss(downView, position);
                                 }
                             })
                             .start();
                 } else {
+                    Log.v(LOG_TAG, "onTouchDown - Not dismiss");
                     mDownView.animate()
                             .translationX(0)
                             .setDuration(mRecyclerView.getContext().getResources()
@@ -120,6 +152,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                Log.v(LOG_TAG, "onTouch - Move");
                 if (mVelocityTracker == null) {
                     break;
                 }
@@ -145,6 +178,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 break;
 
             case MotionEvent.ACTION_CANCEL:
+                Log.v(LOG_TAG, "onTouch - Cancel");
                 if (mVelocityTracker == null) {
                     break;
                 }
@@ -168,5 +202,45 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
         }
 
         return false;
+    }
+
+    private void performDismiss(final View dismissView, final int dismissPosition) {
+
+        if (dismissView != null) {
+
+            final ViewGroup.LayoutParams lp = dismissView.getLayoutParams();
+            final int originalHeight = dismissView.getHeight();
+
+            ValueAnimator animator = ValueAnimator.ofInt(originalHeight, 1).setDuration(dismissView.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime));
+
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mDownPosition = ListView.INVALID_POSITION;
+                    ViewGroup.LayoutParams lp;
+                    // Reset view presentation
+                    dismissView.setAlpha(1f);
+                    dismissView.setTranslationX(0);
+                    lp = dismissView.getLayoutParams();
+                    lp.height = originalHeight;
+                    dismissView.setLayoutParams(lp);
+                    mOnRecyclerViewTouchListener.onDismiss(dismissPosition);
+                    // Send a cancel event
+                    long time = SystemClock.uptimeMillis();
+                    MotionEvent cancelEvent = MotionEvent.obtain(time, time,
+                            MotionEvent.ACTION_CANCEL, 0, 0, 0);
+                    mRecyclerView.dispatchTouchEvent(cancelEvent);
+                }
+            });
+
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    lp.height = (Integer) valueAnimator.getAnimatedValue();
+                    dismissView.setLayoutParams(lp);
+                }
+            });
+            animator.start();
+        }
     }
 }
