@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AlertDialog</string>
+
+    <string name="delete_dialog_tile">Delete task?</string>
+    <string name="delete_dialog_cancel_text">Cancel</string>
+    <string name="delete_dialog_ok_text">Delete</string>
+
+    <string name="text_view_instructions">Click to show Alert Dialog</string>
+    <string name="button_show_text">Show</string>
+
+</resources>
