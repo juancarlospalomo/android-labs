@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SnackBar</string>
+
+    <string name="text_button">Click to show SnackBar</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- SnackBar -->
+    <string name="snack_bar_task_completed_text">Completed</string>
+    <string name="snack_bar_action_text">UNDO</string>
+
+</resources>

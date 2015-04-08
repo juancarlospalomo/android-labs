@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SnackBarTheme" parent="@style/Theme.AppCompat.Light">
+        <!-- SnackBar -->
+        <item name="snackBarStyle">@style/Widget.SnackBarStyle</item>
+        <item name="snackBarText">@style/Widget.SnackBar.Text</item>
+        <item name="snackBarAction">@style/Widget.SnackBar.Action</item>
+    </style>
+</resources>

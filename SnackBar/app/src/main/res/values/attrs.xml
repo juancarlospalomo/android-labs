@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default font family. -->
+    <attr name="fontFamily" format="string" />
+    <!-- SnackBar Styles -->
+    <attr name="snackBarStyle" format="reference"/>
+    <attr name="snackBarText" format="reference"/>
+    <attr name="snackBarAction" format="reference"/>
+</resources>

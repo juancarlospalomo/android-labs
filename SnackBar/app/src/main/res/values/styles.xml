@@ -1,0 +1,27 @@
+<resources>
+
+    <style name="Widget" parent="@android:style/Widget" />
+
+    <!-- Snack bar styles -->
+    <style name="Widget.SnackBarStyle">
+        <item name="android:layout_height">@dimen/snack_bar_single_line_height</item>
+        <item name="android:background">@color/snack_bar_background_color</item>
+    </style>
+
+    <style name="Widget.SnackBar" parent="@android:style/Widget.TextView"/>
+
+    <style name="Widget.SnackBar.Text">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto regular -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+    </style>
+
+    <style name="Widget.SnackBar.Action">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto medium -->
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/fab_color_1</item>
+    </style>
+
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Snack bar colors -->
+    <color name="snack_bar_background_color">#323232</color>
+    <color name="fab_color_1">@color/action_color</color>
+    <color name="action_color">#ff7080</color>
+</resources>
