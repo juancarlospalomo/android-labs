@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Gmail</string>
+    <string name="text_button_sign_out">Sign out</string>
+    <string name="text_button_unregister">Unregister</string>
+</resources>
