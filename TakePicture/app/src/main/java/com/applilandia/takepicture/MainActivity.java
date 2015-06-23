@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    private static final String KEY_PHOTO_PATH = "photo_path";
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_LOAD_IMAGE = 2;
 
@@ -69,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            mCurrentPhotoPath = savedInstanceState.getString(KEY_PHOTO_PATH);
+        }
 
         inflateViews();
         createButtonHandlers();
@@ -114,6 +120,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 showImage(PHOTO_FILE_NAME + ".jpg", 1f);
             }
         });
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_PHOTO_PATH, mCurrentPhotoPath);
     }
 
     /**
