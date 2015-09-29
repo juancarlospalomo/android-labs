@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.applilandia.gmailapi.model.Label;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -24,6 +25,10 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +36,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -273,8 +279,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private class GmailApiAsync extends AsyncTask<String, Void, Void> {
 
-        final String BASE_GMAIL_API_URL = "https://www.googleapis.com/gmail/v1/users/%s/messages";
-        String SCOPE = "oauth2:https://www.googleapis.com/auth/gmail.readonly";
+        final String BASE_GMAIL_MESSAGES_API_URL = "https://www.googleapis.com/gmail/v1/users/%s/messages";
+        final String BASE_GMAIL_LABEL_API_URL = "https://www.googleapis.com/gmail/v1/users/%s/labels";
+        //String SCOPE = "oauth2:https://www.googleapis.com/auth/gmail.readonly";
+
+        String EMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
+        String LABELS_SCOPE = "https://www.googleapis.com/auth/gmail.labels";
+        String SCOPE = "oauth2:" + EMAIL_SCOPE + " " + LABELS_SCOPE;
 
         private String authorize(String email) {
             try {
@@ -290,6 +301,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return null;
         }
 
+        /**
+         * Get the complete json message
+         *
+         * @param reader
+         * @return
+         */
+        private String getJsonResponse(BufferedReader reader) {
+            StringBuffer result = new StringBuffer();
+
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (result.length() == 0) {
+                return null;
+            } else {
+                return result.toString();
+            }
+        }
+
+        private ArrayList<Label> loadLabels(String jsonLabels) {
+            try {
+                JSONObject labelsJSON = new JSONObject(jsonLabels);
+                JSONArray arrayLabel = labelsJSON.getJSONArray("labels");
+                Log.i(LOG_TAG, (String) arrayLabel.getJSONObject(0).get("name"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
         @Override
         protected Void doInBackground(String... params) {
@@ -300,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 HttpURLConnection urlConnection = null;
                 BufferedReader reader = null;
 
-                String urlWithUserId = String.format(BASE_GMAIL_API_URL, email);
+                String urlWithUserId = String.format(BASE_GMAIL_LABEL_API_URL, email);
                 String token = authorize(email);
 
                 if (token != null) {
@@ -314,11 +359,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         InputStream inputStream = urlConnection.getInputStream();
                         reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            Log.i(LOG_TAG, line);
-                        }
-
+                        String response = getJsonResponse(reader);
+                        loadLabels(response);
+                        Log.i(LOG_TAG, "Json: " + response);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
