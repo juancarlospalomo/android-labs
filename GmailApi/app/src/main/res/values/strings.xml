@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GmailApi</string>
+    <string name="title_activity_main">Gmail Api Lab</string>
+
+    <string name="text_sign_out_button">Sign Out</string>
+    <string name="text_revoke_access_button">Revoke</string>
+
+    <string name="text_signing_in">Signing In</string>
+
+</resources>
